@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Income } from './income.entity';
 import { SetIncomeDto } from './dto/set-income.dto';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class IncomeService {
@@ -14,26 +15,23 @@ export class IncomeService {
   // GET income for a user
   async getIncome(userId: number): Promise<Income | null> {
     return this.incomeRepository.findOne({
-      where: { user: { id: userId } },
+      where: { user: { id: userId } as User },
       order: { created_at: 'DESC' },
     });
   }
 
   // POST/PUT set or update income
   async setIncome(userId: number, setIncomeDto: SetIncomeDto): Promise<Income> {
-    // Check if income record already exists for this user
     let income = await this.incomeRepository.findOne({
-      where: { user: { id: userId } },
+      where: { user: { id: userId } as User },
     });
 
     if (income) {
-      // Update existing income
       income.amount = setIncomeDto.amount;
     } else {
-      // Create new income record
       income = this.incomeRepository.create({
         amount: setIncomeDto.amount,
-        user: { id: userId },
+        user: { id: userId } as User,
       });
     }
 
