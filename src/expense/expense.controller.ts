@@ -15,13 +15,11 @@ import { CreateExpenseDto } from './dto/create-expense.dto';
 export class ExpenseController {
   constructor(private expenseService: ExpenseService) {}
 
-  // GET /expenses?userId=1
   @Get()
   findAll(@Query('userId') userId: number) {
     return this.expenseService.findAll(userId);
   }
 
-  // POST /expenses?userId=1
   @Post()
   create(
     @Query('userId') userId: number,
@@ -30,7 +28,6 @@ export class ExpenseController {
     return this.expenseService.create(userId, createExpenseDto);
   }
 
-  // PUT /expenses/1?userId=1
   @Put(':id')
   update(
     @Param('id') id: number,
@@ -40,7 +37,6 @@ export class ExpenseController {
     return this.expenseService.update(id, userId, updateData);
   }
 
-  // DELETE /expenses/1?userId=1
   @Delete(':id')
   remove(@Param('id') id: number, @Query('userId') userId: number) {
     return this.expenseService.remove(id, userId);

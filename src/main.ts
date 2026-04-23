@@ -5,13 +5,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS so frontend (port 5173) can talk to backend (port 3000)
   app.enableCors({
     origin: 'http://localhost:5173',
     credentials: true,
   });
 
-  // Enable validation pipes (validates DTOs automatically)
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

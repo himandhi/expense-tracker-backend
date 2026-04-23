@@ -19,7 +19,6 @@ export class Income {
   @CreateDateColumn()
   created_at: Date;
 
-  // Expose userId as a column
   @Column()
   userId: number;
 

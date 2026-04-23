@@ -22,7 +22,6 @@ export class Expense {
   @CreateDateColumn()
   created_at: Date;
 
-  // Expose userId as a column so we can query by it directly
   @Column()
   userId: number;
 

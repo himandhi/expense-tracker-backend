@@ -16,9 +16,7 @@ export class AuthService {
     private userRepository: Repository<User>,
   ) {}
 
-  // Register a new user
   async register(registerDto: RegisterDto) {
-    // Check if user already exists
     const existingUser = await this.userRepository.findOne({
       where: { email: registerDto.email },
     });
@@ -27,8 +25,6 @@ export class AuthService {
       throw new BadRequestException('Email already registered');
     }
 
-    // Create new user
-    // NOTE: In production, you should hash the password using bcrypt!
     const user = this.userRepository.create({
       email: registerDto.email,
       password: registerDto.password,
@@ -39,7 +35,6 @@ export class AuthService {
     return { message: 'User registered successfully', userId: user.id };
   }
 
-  // Login
   async login(loginDto: LoginDto) {
     const user = await this.userRepository.findOne({
       where: { email: loginDto.email },

@@ -6,13 +6,11 @@ import { SetIncomeDto } from './dto/set-income.dto';
 export class IncomeController {
   constructor(private incomeService: IncomeService) {}
 
-  // GET /income?userId=1
   @Get()
   getIncome(@Query('userId') userId: number) {
     return this.incomeService.getIncome(userId);
   }
 
-  // POST /income?userId=1
   @Post()
   setIncome(
     @Query('userId') userId: number,

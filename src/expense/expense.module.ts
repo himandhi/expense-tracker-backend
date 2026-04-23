@@ -1,9 +1,3 @@
-// ============================================================
-// FILE: src/expense/expense.module.ts (BACKEND)
-// UPDATED: Added Income entity import so ExpenseService
-//          can check remaining balance before adding expenses
-// ============================================================
-
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExpenseController } from './expense.controller';
