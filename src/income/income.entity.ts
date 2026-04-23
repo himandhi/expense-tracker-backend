@@ -1,17 +1,10 @@
-// ============================================================
-// FILE: src/income/income.entity.ts
-// PURPOSE: Defines the "incomes" table in PostgreSQL
-//
-// Auto-creates table:
-//   Columns: id, amount, created_at, userId
-// ============================================================
-
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 
@@ -26,6 +19,11 @@ export class Income {
   @CreateDateColumn()
   created_at: Date;
 
+  // Expose userId as a column
+  @Column()
+  userId: number;
+
   @ManyToOne(() => User, (user) => user.incomes, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   user: User;
 }
