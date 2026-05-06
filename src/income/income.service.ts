@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Income } from './income.entity';
@@ -12,26 +12,34 @@ export class IncomeService {
   ) {}
 
   async getIncome(userId: number): Promise<Income | null> {
-    return this.incomeRepository.findOne({
-      where: { userId },
-      order: { created_at: 'DESC' },
-    });
+    try {
+      return await this.incomeRepository.findOne({
+        where: { userId },
+        order: { created_at: 'DESC' },
+      });
+    } catch {
+      throw new InternalServerErrorException('Failed to fetch income');
+    }
   }
 
   async setIncome(userId: number, setIncomeDto: SetIncomeDto): Promise<Income> {
-    let income = await this.incomeRepository.findOne({
-      where: { userId },
-    });
-
-    if (income) {
-      income.amount = setIncomeDto.amount;
-    } else {
-      income = this.incomeRepository.create({
-        amount: setIncomeDto.amount,
-        userId,
+    try {
+      let income = await this.incomeRepository.findOne({
+        where: { userId },
       });
-    }
 
-    return this.incomeRepository.save(income);
+      if (income) {
+        income.amount = setIncomeDto.amount;
+      } else {
+        income = this.incomeRepository.create({
+          amount: setIncomeDto.amount,
+          userId,
+        });
+      }
+
+      return await this.incomeRepository.save(income);
+    } catch {
+      throw new InternalServerErrorException('Failed to set income');
+    }
   }
 }
