@@ -6,7 +6,6 @@ import { Expense } from './expense.entity';
 import { Income } from '../income/income.entity';
 
 @Module({
-  // CHANGED: Added Income to forFeature so ExpenseService can access it
   imports: [TypeOrmModule.forFeature([Expense, Income])],
   controllers: [ExpenseController],
   providers: [ExpenseService],
