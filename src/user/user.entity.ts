@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Expense } from '../expense/expense.entity';
 import { Income } from '../income/income.entity';
+import { Role } from '../common/enums/role.enum';
 
 @Entity('users')
 export class User {
@@ -18,6 +19,24 @@ export class User {
 
   @Column()
   password: string;
+
+  // NEW: User's display name
+  @Column({ default: '' })
+  username: string;
+
+  // NEW: Role column using Enum
+  // 'enum' type tells TypeORM this column only allows values from Role enum
+  // default: Role.USER means new users are regular users by default
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
+
+  // NEW: Store hashed refresh token for token rotation
+  @Column({ nullable: true })
+  refreshToken: string;
 
   @CreateDateColumn()
   created_at: Date;
