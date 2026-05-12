@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { ExpenseModule } from './expense/expense.module';
 import { IncomeModule } from './income/income.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { IncomeModule } from './income/income.module';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'postgres123',
+      password: 'your_password_here',
       database: 'expense_tracker',
       autoLoadEntities: true,
       synchronize: true,
@@ -19,6 +20,7 @@ import { IncomeModule } from './income/income.module';
     UserModule,
     ExpenseModule,
     IncomeModule,
+    AdminModule,
   ],
 })
 export class AppModule {}
