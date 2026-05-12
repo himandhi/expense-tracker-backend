@@ -12,7 +12,7 @@ import { AdminModule } from './admin/admin.module';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'your_password_here',
+      password: 'postgres123',
       database: 'expense_tracker',
       autoLoadEntities: true,
       synchronize: true,
