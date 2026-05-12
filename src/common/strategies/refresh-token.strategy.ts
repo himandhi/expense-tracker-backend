@@ -8,6 +8,16 @@ interface JwtPayload {
   email: string;
 }
 
+// Accepts `unknown` so `any` from request.cookies passes in safely.
+// Narrows internally — no cast, no unsafe assignment.
+function extractCookie(cookies: unknown, key: string): string | null {
+  if (typeof cookies === 'object' && cookies !== null && key in cookies) {
+    const value = (cookies as Record<string, unknown>)[key];
+    return typeof value === 'string' ? value : null;
+  }
+  return null;
+}
+
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
@@ -17,10 +27,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request): string | null => {
-          const cookies = request?.cookies as
-            | Record<string, string>
-            | undefined;
-          return cookies?.refreshToken || null;
+          return extractCookie(request?.cookies, 'refreshToken');
         },
       ]),
       secretOrKey: 'refresh-secret-key-change-in-production',
@@ -32,8 +39,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     req: Request,
     payload: JwtPayload,
   ): { userId: number; email: string; refreshToken: string } {
-    const cookies = req.cookies as Record<string, string>;
-    const refreshToken: string = cookies?.refreshToken || '';
-    return { ...payload, refreshToken };
+    const refreshToken = extractCookie(req?.cookies, 'refreshToken');
+    return { ...payload, refreshToken: refreshToken ?? '' };
   }
 }
