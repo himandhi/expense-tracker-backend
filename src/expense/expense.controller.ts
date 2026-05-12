@@ -6,39 +6,48 @@ import {
   Delete,
   Body,
   Param,
-  Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { ExpenseService } from './expense.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
+import { AccessTokenGuard } from '../common/guards/access-token.guard';
 
+@UseGuards(AccessTokenGuard)
 @Controller('expenses')
 export class ExpenseController {
   constructor(private expenseService: ExpenseService) {}
 
+  // GET /expenses — uses userId from JWT token (not query param)
   @Get()
-  findAll(@Query('userId') userId: number) {
-    return this.expenseService.findAll(userId);
+  findAll(@Req() req: Request) {
+    const user = req.user as { userId: number };
+    return this.expenseService.findAll(user.userId);
   }
 
+  // POST /expenses
   @Post()
-  create(
-    @Query('userId') userId: number,
-    @Body() createExpenseDto: CreateExpenseDto,
-  ) {
-    return this.expenseService.create(userId, createExpenseDto);
+  create(@Req() req: Request, @Body() createExpenseDto: CreateExpenseDto) {
+    const user = req.user as { userId: number };
+    return this.expenseService.create(user.userId, createExpenseDto);
   }
 
+  // PUT /expenses/:id — EDIT an expense
   @Put(':id')
   update(
+    @Req() req: Request,
     @Param('id') id: number,
-    @Query('userId') userId: number,
     @Body() updateData: Partial<CreateExpenseDto>,
   ) {
-    return this.expenseService.update(id, userId, updateData);
+    const user = req.user as { userId: number };
+    return this.expenseService.update(id, user.userId, updateData);
   }
 
+  // DELETE /expenses/:id
   @Delete(':id')
-  remove(@Param('id') id: number, @Query('userId') userId: number) {
-    return this.expenseService.remove(id, userId);
+  remove(@Req() req: Request, @Param('id') id: number) {
+    const user = req.user as { userId: number };
+    return this.expenseService.remove(id, user.userId);
   }
 }
