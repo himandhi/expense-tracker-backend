@@ -6,6 +6,7 @@ import {
   Param,
   Body,
   UseGuards,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AccessTokenGuard } from '../common/guards/access-token.guard';
@@ -13,15 +14,11 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../common/enums/role.enum';
 
-// Typed body interface — replaces the unsafe `any`
 interface UpdateUserDto {
   username?: string;
   role?: string;
 }
 
-// BOTH guards must pass:
-// 1. AccessTokenGuard: user must be logged in
-// 2. RolesGuard: user must have the ADMIN role
 @UseGuards(AccessTokenGuard, RolesGuard)
 @Roles(Role.ADMIN)
 @Controller('admin')
@@ -29,32 +26,56 @@ export class AdminController {
   constructor(private adminService: AdminService) {}
 
   @Get('overview')
-  getOverview() {
-    return this.adminService.getSystemOverview();
+  async getOverview() {
+    try {
+      return await this.adminService.getSystemOverview();
+    } catch {
+      throw new InternalServerErrorException('Failed to fetch system overview');
+    }
   }
 
   @Get('users')
-  getAllUsers() {
-    return this.adminService.getAllUsers();
+  async getAllUsers() {
+    try {
+      return await this.adminService.getAllUsers();
+    } catch {
+      throw new InternalServerErrorException('Failed to fetch users');
+    }
   }
 
   @Get('expenses')
-  getAllExpenses() {
-    return this.adminService.getAllExpenses();
+  async getAllExpenses() {
+    try {
+      return await this.adminService.getAllExpenses();
+    } catch {
+      throw new InternalServerErrorException('Failed to fetch expenses');
+    }
   }
 
   @Delete('users/:id')
-  deleteUser(@Param('id') id: number) {
-    return this.adminService.deleteUser(id);
+  async deleteUser(@Param('id') id: number) {
+    try {
+      return await this.adminService.deleteUser(id);
+    } catch {
+      throw new InternalServerErrorException('Failed to delete user');
+    }
   }
 
   @Put('users/:id')
-  updateUser(@Param('id') id: number, @Body() updateData: UpdateUserDto) {
-    return this.adminService.updateUser(id, updateData);
+  async updateUser(@Param('id') id: number, @Body() updateData: UpdateUserDto) {
+    try {
+      return await this.adminService.updateUser(id, updateData);
+    } catch {
+      throw new InternalServerErrorException('Failed to update user');
+    }
   }
 
   @Delete('expenses/:id')
-  deleteExpense(@Param('id') id: number) {
-    return this.adminService.deleteExpense(id);
+  async deleteExpense(@Param('id') id: number) {
+    try {
+      return await this.adminService.deleteExpense(id);
+    } catch {
+      throw new InternalServerErrorException('Failed to delete expense');
+    }
   }
 }

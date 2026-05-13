@@ -8,6 +8,7 @@ import {
   Param,
   Req,
   UseGuards,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ExpenseService } from './expense.service';
@@ -19,35 +20,69 @@ import { AccessTokenGuard } from '../common/guards/access-token.guard';
 export class ExpenseController {
   constructor(private expenseService: ExpenseService) {}
 
-  // GET /expenses — uses userId from JWT token (not query param)
+  // GET /expenses
   @Get()
-  findAll(@Req() req: Request) {
-    const user = req.user as { userId: number };
-    return this.expenseService.findAll(user.userId);
+  async findAll(@Req() req: Request) {
+    try {
+      const user = req.user as { userId: number };
+      return await this.expenseService.findAll(user.userId);
+    } catch (error) {
+      // Re-throw known NestJS exceptions (BadRequest, NotFound, etc.)
+      // so they reach the client with the correct status code.
+      // Only wrap truly unexpected errors in InternalServerErrorException.
+      if (error instanceof InternalServerErrorException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to retrieve expenses');
+    }
   }
 
   // POST /expenses
   @Post()
-  create(@Req() req: Request, @Body() createExpenseDto: CreateExpenseDto) {
-    const user = req.user as { userId: number };
-    return this.expenseService.create(user.userId, createExpenseDto);
+  async create(
+    @Req() req: Request,
+    @Body() createExpenseDto: CreateExpenseDto,
+  ) {
+    try {
+      const user = req.user as { userId: number };
+      return await this.expenseService.create(user.userId, createExpenseDto);
+    } catch (error) {
+      if (error instanceof InternalServerErrorException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to create expense');
+    }
   }
 
-  // PUT /expenses/:id — EDIT an expense
+  // PUT /expenses/:id
   @Put(':id')
-  update(
+  async update(
     @Req() req: Request,
     @Param('id') id: number,
     @Body() updateData: Partial<CreateExpenseDto>,
   ) {
-    const user = req.user as { userId: number };
-    return this.expenseService.update(id, user.userId, updateData);
+    try {
+      const user = req.user as { userId: number };
+      return await this.expenseService.update(id, user.userId, updateData);
+    } catch (error) {
+      if (error instanceof InternalServerErrorException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to update expense');
+    }
   }
 
   // DELETE /expenses/:id
   @Delete(':id')
-  remove(@Req() req: Request, @Param('id') id: number) {
-    const user = req.user as { userId: number };
-    return this.expenseService.remove(id, user.userId);
+  async remove(@Req() req: Request, @Param('id') id: number) {
+    try {
+      const user = req.user as { userId: number };
+      return await this.expenseService.remove(id, user.userId);
+    } catch (error) {
+      if (error instanceof InternalServerErrorException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to delete expense');
+    }
   }
 }
