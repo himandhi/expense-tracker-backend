@@ -23,18 +23,17 @@ export class AdminService {
     private incomeRepository: Repository<Income>,
   ) {}
 
-  // Get all users
   async getAllUsers() {
     try {
       return await this.userRepository.find({
         select: ['id', 'email', 'username', 'role', 'created_at'],
+        order: { created_at: 'DESC' },
       });
     } catch {
       throw new InternalServerErrorException('Failed to fetch users');
     }
   }
 
-  // Get all expenses (all users)
   async getAllExpenses() {
     try {
       return await this.expenseRepository.find({
@@ -46,7 +45,6 @@ export class AdminService {
     }
   }
 
-  // Delete a user (and their data via CASCADE)
   async deleteUser(userId: number) {
     try {
       const user = await this.userRepository.findOne({
@@ -67,7 +65,6 @@ export class AdminService {
     }
   }
 
-  // Update any user's data
   async updateUser(
     userId: number,
     updateData: { username?: string; role?: string },
@@ -85,7 +82,11 @@ export class AdminService {
         user.username = updateData.username;
       }
 
-      if (updateData.role) {
+      // FIX: Split condition across two lines to match Prettier format
+      if (
+        updateData.role &&
+        Object.values(Role).includes(updateData.role as Role)
+      ) {
         user.role = updateData.role as Role;
       }
 
@@ -99,7 +100,6 @@ export class AdminService {
     }
   }
 
-  // Delete any expense
   async deleteExpense(expenseId: number) {
     try {
       const expense = await this.expenseRepository.findOne({
@@ -120,7 +120,6 @@ export class AdminService {
     }
   }
 
-  // Get system overview
   async getSystemOverview() {
     try {
       const totalUsers = await this.userRepository.count();
