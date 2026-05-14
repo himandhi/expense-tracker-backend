@@ -29,10 +29,6 @@ export class UserController {
     try {
       return await this.userService.register(registerDto);
     } catch (error) {
-      // instanceof HttpException checks if it is a known NestJS exception
-      // (BadRequestException, UnauthorizedException, etc.)
-      // If yes, re-throw it so the correct status code reaches the client.
-      // If no, throw a generic 500 error.
       if (error instanceof HttpException) {
         throw error;
       }

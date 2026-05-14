@@ -23,7 +23,6 @@ export class UserService {
     private jwtService: JwtService,
   ) {}
 
-  // Generate access token (short-lived: 15 minutes)
   private generateAccessToken(user: User): string {
     const payload = {
       userId: user.id,
@@ -36,7 +35,6 @@ export class UserService {
     });
   }
 
-  // Generate refresh token (long-lived: 7 days)
   private generateRefreshToken(user: User): string {
     const payload = {
       userId: user.id,
@@ -48,7 +46,6 @@ export class UserService {
     });
   }
 
-  // REGISTER
   async register(registerDto: RegisterDto) {
     try {
       const existingUser = await this.userRepository.findOne({
@@ -82,7 +79,6 @@ export class UserService {
     }
   }
 
-  // LOGIN — returns tokens set as cookies
   async login(loginDto: LoginDto) {
     try {
       const user = await this.userRepository.findOne({
@@ -102,11 +98,8 @@ export class UserService {
         throw new UnauthorizedException('Invalid email or password');
       }
 
-      // Generate tokens
       const accessToken = this.generateAccessToken(user);
       const refreshToken = this.generateRefreshToken(user);
-
-      // Hash and store refresh token in database
       const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
       await this.userRepository.update(user.id, {
         refreshToken: hashedRefreshToken,
@@ -130,7 +123,6 @@ export class UserService {
     }
   }
 
-  // REFRESH TOKENS
   async refreshTokens(userId: number, oldRefreshToken: string) {
     try {
       const user = await this.userRepository.findOne({
@@ -167,19 +159,15 @@ export class UserService {
     }
   }
 
-  // LOGOUT — clear refresh token
   async logout(userId: number) {
     try {
       await this.userRepository.update(userId, { refreshToken: '' });
       return { message: 'Logged out successfully' };
     } catch {
-      // _error prefix tells ESLint this is intentionally unused —
-      // we don't need the original error here, we just wrap it
       throw new InternalServerErrorException('Failed to logout');
     }
   }
 
-  // GET PROFILE
   async getProfile(userId: number) {
     try {
       const user = await this.userRepository.findOne({
@@ -200,7 +188,6 @@ export class UserService {
     }
   }
 
-  // UPDATE PROFILE
   async updateProfile(userId: number, updateProfileDto: UpdateProfileDto) {
     try {
       const user = await this.userRepository.findOne({

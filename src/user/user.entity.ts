@@ -20,13 +20,9 @@ export class User {
   @Column()
   password: string;
 
-  // NEW: User's display name
   @Column({ default: '' })
   username: string;
 
-  // NEW: Role column using Enum
-  // 'enum' type tells TypeORM this column only allows values from Role enum
-  // default: Role.USER means new users are regular users by default
   @Column({
     type: 'enum',
     enum: Role,
@@ -34,7 +30,6 @@ export class User {
   })
   role: Role;
 
-  // NEW: Store hashed refresh token for token rotation
   @Column({ nullable: true })
   refreshToken: string;
 
