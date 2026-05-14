@@ -20,16 +20,12 @@ import { AccessTokenGuard } from '../common/guards/access-token.guard';
 export class ExpenseController {
   constructor(private expenseService: ExpenseService) {}
 
-  // GET /expenses
   @Get()
   async findAll(@Req() req: Request) {
     try {
       const user = req.user as { userId: number };
       return await this.expenseService.findAll(user.userId);
     } catch (error) {
-      // Re-throw known NestJS exceptions (BadRequest, NotFound, etc.)
-      // so they reach the client with the correct status code.
-      // Only wrap truly unexpected errors in InternalServerErrorException.
       if (error instanceof InternalServerErrorException) {
         throw error;
       }
@@ -37,7 +33,6 @@ export class ExpenseController {
     }
   }
 
-  // POST /expenses
   @Post()
   async create(
     @Req() req: Request,
@@ -54,7 +49,6 @@ export class ExpenseController {
     }
   }
 
-  // PUT /expenses/:id
   @Put(':id')
   async update(
     @Req() req: Request,
@@ -72,7 +66,6 @@ export class ExpenseController {
     }
   }
 
-  // DELETE /expenses/:id
   @Delete(':id')
   async remove(@Req() req: Request, @Param('id') id: number) {
     try {

@@ -9,8 +9,6 @@ interface JwtPayload {
   role: string;
 }
 
-// Accepts `unknown` so `any` from request.cookies passes in safely.
-// Narrows internally — no cast, no unsafe assignment.
 function extractCookie(cookies: unknown, key: string): string | null {
   if (typeof cookies === 'object' && cookies !== null && key in cookies) {
     const value = (cookies as Record<string, unknown>)[key];

@@ -6,13 +6,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable cookie parsing
   app.use(cookieParser());
 
-  // Enable CORS with credentials (cookies)
   app.enableCors({
     origin: 'http://localhost:5173',
-    credentials: true, // IMPORTANT: allows cookies to be sent
+    credentials: true,
   });
 
   app.useGlobalPipes(

@@ -82,7 +82,6 @@ export class AdminService {
         user.username = updateData.username;
       }
 
-      // FIX: Split condition across two lines to match Prettier format
       if (
         updateData.role &&
         Object.values(Role).includes(updateData.role as Role)

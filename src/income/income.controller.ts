@@ -17,7 +17,6 @@ import { AccessTokenGuard } from '../common/guards/access-token.guard';
 export class IncomeController {
   constructor(private incomeService: IncomeService) {}
 
-  // GET /income — userId from JWT
   @Get()
   async getIncome(@Req() req: Request) {
     try {
@@ -28,7 +27,6 @@ export class IncomeController {
     }
   }
 
-  // POST /income
   @Post()
   async setIncome(@Req() req: Request, @Body() setIncomeDto: SetIncomeDto) {
     try {
